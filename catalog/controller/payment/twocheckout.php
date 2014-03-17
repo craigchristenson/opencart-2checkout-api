@@ -13,6 +13,7 @@ class ControllerPaymentTwoCheckout extends Controller {
         $this->data['entry_cc_number'] = $this->language->get('entry_cc_number');
         $this->data['entry_cc_expire_date'] = $this->language->get('entry_cc_expire_date');
         $this->data['entry_cc_cvv2'] = $this->language->get('entry_cc_cvv2');
+        $this->data['text_cc_error'] = $this->language->get('text_cc_error');
 
         $this->data['button_confirm'] = $this->language->get('button_confirm');
 
