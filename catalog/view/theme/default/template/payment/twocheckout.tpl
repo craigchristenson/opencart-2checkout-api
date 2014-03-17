@@ -1,5 +1,6 @@
 <h2><?php echo $text_credit_card; ?></h2>
 <div class="content" id="payment">
+    <span class="error" id="twocheckout_error" style="display:none"><?php echo $text_cc_error; ?></span>
     <form id="co-payment-form">
         <input id="sellerId" type="hidden" maxlength="16" width="20" value=<?php echo $twocheckout_sid; ?>>
         <input id="token" name="token" type="hidden" width="10" value="">
@@ -96,14 +97,23 @@
 
     function errorCallback(data) {
         clearPaymentFields();
-        alert(data.errorMsg);
+        if (data.errorCode === 200) {
+            TCO.requestToken(successCallback, errorCallback, 'myCCForm');
+        } else if (data.errorCode == 401) {
+            $( "#twocheckout_error" ).show();
+        } else{
+            alert(data.errorCode);
+        }
     }
 
     function retrieveToken() {
+        $( "#twocheckout_error" ).hide();
         if(typeof TCO.requestToken == 'undefined'){
             alert("Error Processing Payment");
         }
         else {
+            $('#ccNo').val($('#ccNo').val().replace(/[^0-9\.]+/g,''));
+            $('#cvv').val($('#cvv').val().replace(/[^0-9\.]+/g,''));
             TCO.requestToken(successCallback, errorCallback, 'co-payment-form');
         }
     }

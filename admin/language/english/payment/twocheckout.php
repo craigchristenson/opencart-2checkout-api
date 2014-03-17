@@ -9,7 +9,7 @@ $_['text_twocheckout']	 = '<a href="https://www.2checkout.com/2co/affiliate?affi
 
 // Entry
 $_['entry_account']      = '2Checkout Account ID:';
-$_['entry_public_key']   = 'Public Key:<br /><span class="help">Your 2Checkout API public key.</span>';
+$_['entry_public_key']   = 'Publishable Key:<br /><span class="help">Your 2Checkout API public key.</span>';
 $_['entry_private_key']  = 'Private Key:<br /><span class="help">Your 2Checkout API private key.</span>';
 $_['entry_test']         = 'Sandbox Mode:';
 $_['entry_total']        = 'Total:<br /><span class="help">The checkout total the order must reach before this payment method becomes active.</span>';
