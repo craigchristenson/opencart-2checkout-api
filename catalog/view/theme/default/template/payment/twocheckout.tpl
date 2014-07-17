@@ -102,7 +102,7 @@
         } else if (data.errorCode == 401) {
             $( "#twocheckout_error" ).show();
         } else{
-            alert(data.errorCode);
+            alert(data.errorMsg);
         }
     }
 
