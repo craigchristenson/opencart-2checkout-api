@@ -92,9 +92,8 @@ class ControllerPaymentTwoCheckoutApi extends Controller {
             }
             $charge = Twocheckout_Charge::auth($params);
 
-            $this->model_checkout_order->confirm($this->session->data['order_id'], $this->config->get('config_order_status_id'));
             $message = '2Checkout Order: ' . $charge['response']['orderNumber'];
-            $this->model_checkout_order->update($this->session->data['order_id'], $this->config->get('twocheckout_api_order_status_id'), $message, false);
+            $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('twocheckout_api_order_status_id'), '', true);
             $charge['oc_redirect'] = $this->url->link('checkout/success', '', 'SSL');
             $this->response->setOutput(json_encode($charge));
 

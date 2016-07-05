@@ -58,7 +58,8 @@ class ControllerPaymentTwoCheckoutPP extends Controller {
 		
 		$data['lang'] = $this->session->data['language'];
 
-		$data['return_url'] = $this->url->link('payment/twocheckout_pp/callback', '', 'SSL');
+		$data['x_receipt_link_url'] = $this->url->link('payment/twocheckout_pp/callback', '', 'SSL');
+		$data['return_url'] = $this->url->link('checkout/checkout', '', 'SSL');
 		
 		return $this->load->view('payment/twocheckout_pp', $data);
 	}
@@ -71,15 +72,10 @@ class ControllerPaymentTwoCheckoutPP extends Controller {
 		
 		if (strtoupper(md5($this->config->get('twocheckout_pp_secret') . $this->config->get('twocheckout_pp_account') . $order_number . $this->request->request['total'])) == $this->request->request['key']) {
 			if ($this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false) == $this->request->request['total']) {
-				$this->model_checkout_order->confirm($this->request->request['cart_order_id'], $this->config->get('twocheckout_pp_order_status_id'));
+				$this->model_checkout_order->addOrderHistory($this->request->request['cart_order_id'], $this->config->get('twocheckout_pp_order_status_id'));
 			} else {
-				$this->model_checkout_order->confirm($this->request->request['cart_order_id'], $this->config->get('config_order_status_id'));// Ugh. Some one've faked the sum. What should we do? Probably drop a mail to the shop owner?				
+				$this->model_checkout_order->addOrderHistory($this->request->request['cart_order_id'], $this->config->get('config_order_status_id'));
 			}
-			
-			// We can't use $this->redirect() here, because of 2CO behavior. It fetches this page
-			// on behalf of the user and thus user (and his browser) see this as located at 2checkout.com
-			// domain. So user's cookies are not here and he will see empty basket and probably other
-			// weird things.
 			
 			echo '<html>' . "\n";
 			echo '<head>' . "\n";
@@ -92,7 +88,7 @@ class ControllerPaymentTwoCheckoutPP extends Controller {
 			exit();
 		} else {
 			echo 'The response from 2checkout.com can\'t be parsed. Contact site administrator, please!'; 
-		}		
+		}
 	}
 }
 ?>
