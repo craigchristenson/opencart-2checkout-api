@@ -1,10 +1,10 @@
 <h2><?php echo $text_credit_card; ?></h2>
 <div class="content" id="payment">
-    <span class="error" id="twocheckout_error" style="display:none"><?php echo $text_cc_error; ?></span>
+    <span class="error" id="twocheckout_api_error" style="display:none"><?php echo $text_cc_error; ?></span>
     <form id="co-payment-form">
-        <input id="sellerId" type="hidden" maxlength="16" width="20" value=<?php echo $twocheckout_sid; ?>>
+        <input id="sellerId" type="hidden" maxlength="16" width="20" value=<?php echo $twocheckout_api_sid; ?>>
         <input id="token" name="token" type="hidden" width="10" value="">
-        <input id="publishableKey" type="hidden" maxlength="16" width="20" value=<?php echo $twocheckout_public_key; ?>>
+        <input id="publishableKey" type="hidden" maxlength="16" width="20" value=<?php echo $twocheckout_api_public_key; ?>>
     <table class="form">
         <tr>
             <td><?php echo $entry_cc_number; ?></td>
@@ -32,7 +32,7 @@
     </form>
 </div>
 <div class="buttons">
-    <div class="right"><input type="button" value="<?php echo $button_confirm; ?>" id="button-confirm" class="button" onclick="retrieveToken();" /></div>
+    <div class="right"><input type="button" value="<?php echo $button_confirm; ?>" id="button-confirm" loading-text="Loading..." class="btn btn-primary" onclick="retrieveToken();" /></div>
 </div>
 <script type="text/javascript">
     function successCallback(data) {
@@ -69,7 +69,7 @@
             dataObj['token']=tco_token;
 
             $.ajax({
-                url: 'index.php?route=payment/twocheckout/send',
+                url: 'index.php?route=payment/twocheckout_api/send',
                 type: 'get',
                 contentType: 'application/json',
                 data: dataObj,
@@ -77,10 +77,11 @@
                 dataType: 'json',
                 beforeSend: function() {
                     $('#button-confirm').attr('disabled', true);
-                    $('#payment').before('<div class="attention"><img src="catalog/view/theme/default/image/loading.gif" alt="" /> <?php echo $text_wait; ?></div>');
+                    $('#button-confirm').button('loading');
                 },
                 complete: function() {
                     $('#button-confirm').attr('disabled', false);
+                    $('#button-confirm').button('reset');
                     $('.attention').remove();
                 },
                 success: function(json) {
@@ -100,14 +101,14 @@
         if (data.errorCode === 200) {
             TCO.requestToken(successCallback, errorCallback, 'myCCForm');
         } else if (data.errorCode == 401) {
-            $( "#twocheckout_error" ).show();
+            $( "#twocheckout_api_error" ).show();
         } else{
             alert(data.errorMsg);
         }
     }
 
     function retrieveToken() {
-        $( "#twocheckout_error" ).hide();
+        $( "#twocheckout_api_error" ).hide();
         if(typeof TCO.requestToken == 'undefined'){
             alert("Error Processing Payment");
         }
@@ -126,7 +127,7 @@
     }
 </script>
 <?php
-    if ($twocheckout_test) {
+    if ($twocheckout_api_test) {
         echo '<script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/script/publickey/"></script>';
         echo '<script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/2co.js"></script>';
     } else {

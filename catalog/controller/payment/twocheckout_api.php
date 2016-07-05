@@ -2,25 +2,25 @@
 
 require_once dirname(dirname(dirname(__FILE__))) . '/lib/Twocheckout/TwocheckoutApi.php';
 
-class ControllerPaymentTwoCheckout extends Controller {
-    protected function index() {
-        $this->language->load('payment/twocheckout');
+class ControllerPaymentTwoCheckoutApi extends Controller {
+    public function index() {
+        $this->load->language('payment/twocheckout_api');
 
-        $this->data['text_credit_card'] = $this->language->get('text_credit_card');
-        $this->data['text_wait'] = $this->language->get('text_wait');
+        $data['text_credit_card'] = $this->language->get('text_credit_card');
+        $data['text_wait'] = $this->language->get('text_wait');
 
-        $this->data['entry_cc_owner'] = $this->language->get('entry_cc_owner');
-        $this->data['entry_cc_number'] = $this->language->get('entry_cc_number');
-        $this->data['entry_cc_expire_date'] = $this->language->get('entry_cc_expire_date');
-        $this->data['entry_cc_cvv2'] = $this->language->get('entry_cc_cvv2');
-        $this->data['text_cc_error'] = $this->language->get('text_cc_error');
+        $data['entry_cc_owner'] = $this->language->get('entry_cc_owner');
+        $data['entry_cc_number'] = $this->language->get('entry_cc_number');
+        $data['entry_cc_expire_date'] = $this->language->get('entry_cc_expire_date');
+        $data['entry_cc_cvv2'] = $this->language->get('entry_cc_cvv2');
+        $data['text_cc_error'] = $this->language->get('text_cc_error');
 
-        $this->data['button_confirm'] = $this->language->get('button_confirm');
+        $data['button_confirm'] = $this->language->get('button_confirm');
 
-        $this->data['months'] = array();
+        $data['months'] = array();
 
         for ($i = 1; $i <= 12; $i++) {
-            $this->data['months'][] = array(
+            $data['months'][] = array(
                 'text'  => strftime('%B', mktime(0, 0, 0, $i, 1, 2000)),
                 'value' => sprintf('%02d', $i)
             );
@@ -28,26 +28,20 @@ class ControllerPaymentTwoCheckout extends Controller {
 
         $today = getdate();
 
-        $this->data['year_expire'] = array();
+        $data['year_expire'] = array();
 
         for ($i = $today['year']; $i < $today['year'] + 11; $i++) {
-            $this->data['year_expire'][] = array(
+            $data['year_expire'][] = array(
                 'text'  => strftime('%Y', mktime(0, 0, 0, 1, 1, $i)),
                 'value' => strftime('%Y', mktime(0, 0, 0, 1, 1, $i))
             );
         }
 
-        $this->data['twocheckout_sid'] = $this->config->get('twocheckout_account');
-        $this->data['twocheckout_public_key'] = $this->config->get('twocheckout_public_key');
-        $this->data['twocheckout_test'] = $this->config->get('twocheckout_test');
+        $data['twocheckout_api_sid'] = $this->config->get('twocheckout_api_account');
+        $data['twocheckout_api_public_key'] = $this->config->get('twocheckout_api_public_key');
+        $data['twocheckout_api_test'] = $this->config->get('twocheckout_api_test');
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/twocheckout.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/twocheckout.tpl';
-        } else {
-            $this->template = 'default/template/payment/twocheckout.tpl';
-        }
-
-        $this->render();
+        return $this->load->view('payment/twocheckout_api', $data);
     }
 
 
@@ -56,7 +50,7 @@ class ControllerPaymentTwoCheckout extends Controller {
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
         $params = array(
-            "sellerId" => $this->config->get('twocheckout_account'),
+            "sellerId" => $this->config->get('twocheckout_api_account'),
             "merchantOrderId" => $this->session->data['order_id'],
             "token"      => $this->request->get['token'],
             "currency"   => $order_info['currency_code'],
@@ -91,16 +85,16 @@ class ControllerPaymentTwoCheckout extends Controller {
         }
 
         try {
-            if ($this->config->get('twocheckout_test')) {
-                TwocheckoutApi::setCredentials($this->config->get('twocheckout_account'), $this->config->get('twocheckout_private_key'), 'sandbox');
+            if ($this->config->get('twocheckout_api_test')) {
+                TwocheckoutApi::setCredentials($this->config->get('twocheckout_api_account'), $this->config->get('twocheckout_api_private_key'), 'sandbox');
             } else {
-                TwocheckoutApi::setCredentials($this->config->get('twocheckout_account'), $this->config->get('twocheckout_private_key'));
+                TwocheckoutApi::setCredentials($this->config->get('twocheckout_api_account'), $this->config->get('twocheckout_api_private_key'));
             }
             $charge = Twocheckout_Charge::auth($params);
 
             $this->model_checkout_order->confirm($this->session->data['order_id'], $this->config->get('config_order_status_id'));
             $message = '2Checkout Order: ' . $charge['response']['orderNumber'];
-            $this->model_checkout_order->update($this->session->data['order_id'], $this->config->get('twocheckout_order_status_id'), $message, false);
+            $this->model_checkout_order->update($this->session->data['order_id'], $this->config->get('twocheckout_api_order_status_id'), $message, false);
             $charge['oc_redirect'] = $this->url->link('checkout/success', '', 'SSL');
             $this->response->setOutput(json_encode($charge));
 
