@@ -69,7 +69,7 @@
             dataObj['token']=tco_token;
 
             $.ajax({
-                url: 'index.php?route=payment/twocheckout_api/send',
+                url: 'index.php?route=extension/payment/twocheckout_api/send',
                 type: 'get',
                 contentType: 'application/json',
                 data: dataObj,

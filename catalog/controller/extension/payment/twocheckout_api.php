@@ -1,10 +1,10 @@
 <?php
 
-require_once dirname(dirname(dirname(__FILE__))) . '/lib/Twocheckout/TwocheckoutApi.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/lib/Twocheckout/TwocheckoutApi.php';
 
-class ControllerPaymentTwoCheckoutApi extends Controller {
+class ControllerExtensionPaymentTwoCheckoutApi extends Controller {
     public function index() {
-        $this->load->language('payment/twocheckout_api');
+        $this->load->language('extension/payment/twocheckout_api');
 
         $data['text_credit_card'] = $this->language->get('text_credit_card');
         $data['text_wait'] = $this->language->get('text_wait');
@@ -41,7 +41,7 @@ class ControllerPaymentTwoCheckoutApi extends Controller {
         $data['twocheckout_api_public_key'] = $this->config->get('twocheckout_api_public_key');
         $data['twocheckout_api_test'] = $this->config->get('twocheckout_api_test');
 
-        return $this->load->view('payment/twocheckout_api', $data);
+        return $this->load->view('extension/payment/twocheckout_api', $data);
     }
 
 
