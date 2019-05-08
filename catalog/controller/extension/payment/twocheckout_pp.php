@@ -7,7 +7,7 @@ class ControllerExtensionPaymentTwoCheckoutPP extends Controller {
 		
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 		
-		$data['action'] = 'https://local.2checkout.com:18890/checkout/purchase';
+		$data['action'] = 'https://www.2checkout.com/checkout/purchase';
 
 		$data['sid'] = $this->config->get('twocheckout_pp_account');
 		$data['currency_code'] = $order_info['currency_code'];
