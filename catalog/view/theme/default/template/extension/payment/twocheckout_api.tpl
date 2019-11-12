@@ -1,38 +1,38 @@
-<h2><?php echo $text_credit_card; ?></h2>
+<h2>{{ text_credit_card }}</h2>
 <div class="content" id="payment">
-    <span class="error" id="twocheckout_api_error" style="display:none"><?php echo $text_cc_error; ?></span>
+    <span class="error" id="payment_twocheckout_api_error" style="display:none">{{ text_cc_error }}</span>
     <form id="co-payment-form">
-        <input id="sellerId" type="hidden" maxlength="16" width="20" value=<?php echo $twocheckout_api_sid; ?>>
+        <input id="sellerId" type="hidden" maxlength="16" width="20" value="{{ payment_twocheckout_api_sid }}">
         <input id="token" name="token" type="hidden" width="10" value="">
-        <input id="publishableKey" type="hidden" maxlength="16" width="20" value=<?php echo $twocheckout_api_public_key; ?>>
+        <input id="publishableKey" type="hidden" maxlength="16" width="20" value="{{ payment_twocheckout_api_public_key }}">
     <table class="form">
         <tr>
-            <td><?php echo $entry_cc_number; ?></td>
+            <td>{{ entry_cc_number }}</td>
             <td><input type="text" id="ccNo" value="" /></td>
         </tr>
         <tr>
-            <td><?php echo $entry_cc_expire_date; ?></td>
+            <td>{{ entry_cc_expire_date }}</td>
             <td><select id="expMonth">
-                    <?php foreach ($months as $month) { ?>
-                    <option value="<?php echo $month['value']; ?>"><?php echo $month['text']; ?></option>
-                    <?php } ?>
+                    {% for month in months %}
+                    <option value="{{ month.value }}">{{ month.text }}</option>
+                    {% endfor %}
                 </select>
                 /
                 <select id="expYear">
-                    <?php foreach ($year_expire as $year) { ?>
-                    <option value="<?php echo $year['value']; ?>"><?php echo $year['text']; ?></option>
-                    <?php } ?>
+                    {% for year in year_expire %}
+                    <option value="{{ year.value }}">{{ year.text }}</option>
+                    {% endfor %}
                 </select></td>
         </tr>
         <tr>
-            <td><?php echo $entry_cc_cvv2; ?></td>
+            <td>{{ entry_cc_cvv2 }}</td>
             <td><input type="text" id="cvv" value="" size="3" /></td>
         </tr>
     </table>
     </form>
 </div>
 <div class="buttons">
-    <div class="right"><input type="button" value="<?php echo $button_confirm; ?>" id="button-confirm" loading-text="Loading..." class="btn btn-primary" onclick="retrieveToken();" /></div>
+    <div class="right"><input type="button" value="{{ button_confirm }]" id="button-confirm" loading-text="Loading..." class="btn btn-primary" onclick="retrieveToken();" /></div>
 </div>
 <script type="text/javascript">
     function successCallback(data) {
@@ -126,12 +126,10 @@
         $('#expYear').val('');
     }
 </script>
-<?php
-    if ($twocheckout_api_test) {
-        echo '<script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/script/publickey/"></script>';
-        echo '<script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/2co.js"></script>';
-    } else {
-        echo '<script type="text/javascript" src="https://www.2checkout.com/checkout/api/script/publickey/"></script>';
-        echo '<script type="text/javascript" src="https://www.2checkout.com/checkout/api/2co.js"></script>';     
-    }
-?>
+    {% if payment_twocheckout_api_test %}
+        {{ '<script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/script/publickey/"></script>' }}
+        {{ '<script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/2co.js"></script>' }}
+    {% else %}
+        {{ '<script type="text/javascript" src="https://www.2checkout.com/checkout/api/script/publickey/"></script>' }}
+        {{ '<script type="text/javascript" src="https://www.2checkout.com/checkout/api/2co.js"></script>' }}
+    {% endif %}
