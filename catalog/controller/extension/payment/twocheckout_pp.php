@@ -1,7 +1,6 @@
 <?php
 class ControllerExtensionPaymentTwoCheckoutPP extends Controller {
 	public function index() {
-    	$data['button_confirm'] = $this->language->get('button_confirm');
 
 		$this->load->model('checkout/order');
 		
@@ -9,7 +8,7 @@ class ControllerExtensionPaymentTwoCheckoutPP extends Controller {
 		
 		$data['action'] = 'https://www.2checkout.com/checkout/purchase';
 
-		$data['sid'] = $this->config->get('twocheckout_pp_account');
+		$data['sid'] = $this->config->get('payment_twocheckout_pp_account');
 		$data['currency_code'] = $order_info['currency_code'];
 		$data['total'] = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 		$data['cart_order_id'] = $this->session->data['order_id'];
@@ -58,8 +57,8 @@ class ControllerExtensionPaymentTwoCheckoutPP extends Controller {
 		
 		$data['lang'] = $this->session->data['language'];
 
-		$data['x_receipt_link_url'] = $this->url->link('extension/payment/twocheckout_pp/callback', '', 'SSL');
-		$data['return_url'] = $this->url->link('checkout/checkout', '', 'SSL');
+		$data['x_receipt_link_url'] = $this->url->link('extension/payment/twocheckout_pp/callback', '', true);
+		$data['return_url'] = $this->url->link('checkout/checkout', '', true);
 		
 		return $this->load->view('extension/payment/twocheckout_pp', $data);
 	}
@@ -69,13 +68,10 @@ class ControllerExtensionPaymentTwoCheckoutPP extends Controller {
 		
 		$order_info = $this->model_checkout_order->getOrder($this->request->request['cart_order_id']);
 		$order_number = $this->request->request['order_number'];
-		echo "$this->config->get('twocheckout_pp_secret') \n";
-		echo "$this->config->get('twocheckout_pp_account') \n";
-		print_r($this->request->request);
-		if (strtoupper(md5($this->config->get('twocheckout_pp_secret') . $this->config->get('twocheckout_pp_account') . $order_number . $this->request->request['total'])) == $this->request->request['key']) {
-      echo 'MD5 matched';
+		
+		if (strtoupper(md5($this->config->get('payment_twocheckout_pp_secret') . $this->config->get('payment_twocheckout_pp_account') . $order_number . $this->request->request['total'])) == $this->request->request['key']) {
 			if ($this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false) == $this->request->request['total']) {
-				$this->model_checkout_order->addOrderHistory($this->request->request['cart_order_id'], $this->config->get('twocheckout_pp_order_status_id'));
+				$this->model_checkout_order->addOrderHistory($this->request->request['cart_order_id'], $this->config->get('payment_twocheckout_pp_order_status_id'));
 			} else {
 				$this->model_checkout_order->addOrderHistory($this->request->request['cart_order_id'], $this->config->get('config_order_status_id'));
 			}
@@ -90,9 +86,7 @@ class ControllerExtensionPaymentTwoCheckoutPP extends Controller {
 			echo '</html>' . "\n";
 			exit();
 		} else {
-      echo "MD5 not matched \n";
 			echo 'The response from 2checkout.com can\'t be parsed. Contact site administrator, please!'; 
 		}
 	}
 }
-?>
