@@ -12,4 +12,3 @@ $_['entry_cc_cvv2']        = 'Card Security Code (CVV2):';
 
 // Message
 $_['text_cc_error']        = 'Your credit card details are incorrect, please try again.';
-?>
