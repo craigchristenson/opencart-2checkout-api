@@ -27,7 +27,7 @@ class ControllerExtensionPaymentTwoCheckoutApi extends Controller {
 
         $data['twocheckout_api_sid'] = $this->config->get('payment_twocheckout_api_account');
         $data['twocheckout_api_public_key'] = $this->config->get('payment_twocheckout_api_public_key');
-        $data['payment_twocheckout_api_test'] = $this->config->get('payment_twocheckout_api_test');
+        $data['twocheckout_api_test'] = $this->config->get('payment_twocheckout_api_test');
 
         return $this->load->view('extension/payment/twocheckout_api', $data);
     }
