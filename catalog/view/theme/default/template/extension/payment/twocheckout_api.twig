@@ -2,9 +2,9 @@
 <div class="content" id="payment">
     <span class="error" id="payment_twocheckout_api_error" style="display:none">{{ text_cc_error }}</span>
     <form id="co-payment-form">
-        <input id="sellerId" type="hidden" maxlength="16" width="20" value="{{ payment_twocheckout_api_sid }}">
+        <input id="sellerId" type="hidden" maxlength="16" width="20" value="{{ twocheckout_api_sid }}">
         <input id="token" name="token" type="hidden" width="10" value="">
-        <input id="publishableKey" type="hidden" maxlength="16" width="20" value="{{ payment_twocheckout_api_public_key }}">
+        <input id="publishableKey" type="hidden" maxlength="16" width="20" value="{{ twocheckout_api_public_key }}">
     <table class="form">
         <tr>
             <td>{{ entry_cc_number }}</td>
@@ -126,7 +126,7 @@
         $('#expYear').val('');
     }
 </script>
-    {% if payment_twocheckout_api_test %}
+    {% if twocheckout_api_test %}
         {{ '<script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/script/publickey/"></script>' }}
         {{ '<script type="text/javascript" src="https://sandbox.2checkout.com/checkout/api/2co.js"></script>' }}
     {% else %}
