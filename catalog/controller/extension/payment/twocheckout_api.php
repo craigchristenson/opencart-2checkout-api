@@ -1,10 +1,9 @@
 <?php
-
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/lib/Twocheckout/TwocheckoutApi.php';
-
 class ControllerExtensionPaymentTwoCheckoutApi extends Controller {
     public function index() {
         $this->load->language('extension/payment/twocheckout_api');
+
+		$this->load->library('twocheckout');
 
         $data['text_credit_card'] = $this->language->get('text_credit_card');
         $data['text_wait'] = $this->language->get('text_wait');
@@ -37,9 +36,9 @@ class ControllerExtensionPaymentTwoCheckoutApi extends Controller {
             );
         }
 
-        $data['twocheckout_api_sid'] = $this->config->get('twocheckout_api_account');
-        $data['twocheckout_api_public_key'] = $this->config->get('twocheckout_api_public_key');
-        $data['twocheckout_api_test'] = $this->config->get('twocheckout_api_test');
+        $data['twocheckout_api_sid'] = $this->config->get('payment_twocheckout_api_account');
+        $data['twocheckout_api_public_key'] = $this->config->get('payment_twocheckout_api_public_key');
+        $data['payment_twocheckout_api_test'] = $this->config->get('payment_twocheckout_api_test');
 
         return $this->load->view('extension/payment/twocheckout_api', $data);
     }
@@ -50,21 +49,21 @@ class ControllerExtensionPaymentTwoCheckoutApi extends Controller {
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
         $params = array(
-            "sellerId" => $this->config->get('twocheckout_api_account'),
+            "sellerId" => $this->config->get('payment_twocheckout_api_account'),
             "merchantOrderId" => $this->session->data['order_id'],
             "token"      => $this->request->get['token'],
             "currency"   => $order_info['currency_code'],
             "total"      => $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false),
             "billingAddr" => array(
-                "name" => $order_info['payment_firstname'] . ' ' . $order_info['payment_lastname'],
-                "addrLine1" => $order_info['payment_address_1'],
-                "addrLine2" => $order_info['payment_address_2'],
-                "city" => $order_info['payment_city'],
-                "state" => ($order_info['payment_iso_code_2'] == 'US' || $order_info['payment_iso_code_2'] == 'CA') ? $order_info['payment_zone'] : 'XX',
-                "zipCode" => $order_info['payment_postcode'],
-                "country" => $order_info['payment_country'],
-                "email" => $order_info['email'],
-                "phoneNumber" => $order_info['telephone']
+            "name" => $order_info['payment_firstname'] . ' ' . $order_info['payment_lastname'],
+            "addrLine1" => $order_info['payment_address_1'],
+            "addrLine2" => $order_info['payment_address_2'],
+            "city" => $order_info['payment_city'],
+            "state" => ($order_info['payment_iso_code_2'] == 'US' || $order_info['payment_iso_code_2'] == 'CA') ? $order_info['payment_zone'] : 'XX',
+            "zipCode" => $order_info['payment_postcode'],
+            "country" => $order_info['payment_country'],
+            "email" => $order_info['email'],
+            "phoneNumber" => $order_info['telephone']
             )
         );
         if ($this->cart->hasShipping()) {
@@ -85,16 +84,16 @@ class ControllerExtensionPaymentTwoCheckoutApi extends Controller {
         }
 
         try {
-            if ($this->config->get('twocheckout_api_test')) {
-                TwocheckoutApi::setCredentials($this->config->get('twocheckout_api_account'), $this->config->get('twocheckout_api_private_key'), 'sandbox');
+            if ($this->config->get('payment_twocheckout_api_test')) {
+                TwocheckoutApi::setCredentials($this->config->get('payment_twocheckout_api_account'), $this->config->get('payment_twocheckout_api_private_key'), 'sandbox');
             } else {
-                TwocheckoutApi::setCredentials($this->config->get('twocheckout_api_account'), $this->config->get('twocheckout_api_private_key'));
+                TwocheckoutApi::setCredentials($this->config->get('payment_twocheckout_api_account'), $this->config->get('payment_twocheckout_api_private_key'));
             }
             $charge = Twocheckout_Charge::auth($params);
 
             $message = '2Checkout Order: ' . $charge['response']['orderNumber'];
-            $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('twocheckout_api_order_status_id'), '', true);
-            $charge['oc_redirect'] = $this->url->link('checkout/success', '', 'SSL');
+            $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_twocheckout_api_order_status_id'), '', true);
+            $charge['oc_redirect'] = $this->url->link('checkout/success', '', true);
             $this->response->setOutput(json_encode($charge));
 
         } catch (Twocheckout_Error $e) {
@@ -106,4 +105,3 @@ class ControllerExtensionPaymentTwoCheckoutApi extends Controller {
 
     }
 }
-?>
