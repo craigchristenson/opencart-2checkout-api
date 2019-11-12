@@ -3,7 +3,7 @@
 $_['heading_title']      = '2Checkout API';
 
 // Text 
-$_['text_payment']       = 'Payment';
+$_['text_extension']     = 'Extensions';
 $_['text_success']       = 'Success: You have modified 2Checkout account details!';
 $_['text_edit']          = 'Edit 2Checkout API';
 $_['text_twocheckout_api']	 = '<a href="https://www.2checkout.com" target="_blank"><img src="view/image/payment/2checkout.png" alt="2Checkout" title="2Checkout" style="border: 1px solid #EEEEEE;" /></a>';
@@ -23,5 +23,3 @@ $_['entry_sort_order']   = 'Sort Order:';
 $_['error_permission']   = 'Warning: You do not have permission to modify payment 2Checkout!';
 $_['error_account']      = 'Account No. Required!';
 $_['error_secret']       = 'Secret Word Required!';
-
-?>
