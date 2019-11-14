@@ -19,7 +19,7 @@ class ModelExtensionPaymentTwoCheckoutPP extends Model {
 	
 		if ($status) {  
       		$method_data = array( 
-        		'code'       => 'payment_twocheckout_pp',
+        		'code'       => 'twocheckout_pp',
         		'title'      => $this->language->get('text_title'),
         		'terms'      => '',
 			'sort_order' => $this->config->get('payment_twocheckout_pp_sort_order')

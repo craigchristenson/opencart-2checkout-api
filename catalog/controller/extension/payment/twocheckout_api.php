@@ -71,25 +71,20 @@ class ControllerExtensionPaymentTwoCheckoutApi extends Controller {
             $params = array_merge($params,$shipping);
         }
 
-        try {
-            if ($this->config->get('payment_twocheckout_api_test')) {
-                TwocheckoutApi::setCredentials($this->config->get('payment_twocheckout_api_account'), $this->config->get('payment_twocheckout_api_private_key'), 'sandbox');
-            } else {
-                TwocheckoutApi::setCredentials($this->config->get('payment_twocheckout_api_account'), $this->config->get('payment_twocheckout_api_private_key'));
-            }
-            $charge = Twocheckout_Charge::auth($params);
-
-            $message = '2Checkout Order: ' . $charge['response']['orderNumber'];
-            $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_twocheckout_api_order_status_id'), '', true);
-            $charge['oc_redirect'] = $this->url->link('checkout/success', '', true);
-            $this->response->setOutput(json_encode($charge));
-
-        } catch (Twocheckout_Error $e) {
-            $error = array(
-              "error" => $e->getMessage()
-            );
-            $this->response->setOutput(json_encode($error));
+        $sandbox = $this->config->get('payment_twocheckout_api_test');
+        $charge = Twocheckout::auth(
+	    $this->config->get('payment_twocheckout_api_account'),
+	    $this->config->get('payment_twocheckout_api_private_key'),
+	    $sandbox,
+	    $params
+        );
+        if (isset($charge['error'])) {
+	    $this->response->setOutput(json_encode($charge));
+        } else {
+	    $message = '2Checkout Order: ' . $charge['response']['orderNumber'];
+	    $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_twocheckout_api_order_status_id'), '', true);
+	    $charge['oc_redirect'] = $this->url->link('checkout/success', '', true);
+	    $this->response->setOutput(json_encode($charge));
         }
-
     }
 }
