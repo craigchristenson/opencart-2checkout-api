@@ -42,7 +42,7 @@
 2. Click the **Account** tab and **Site Management** subcategory.
 3. Under **Direct Return** select **Header Redirect** or **Given links back to my website**.
 4. Enter your **Secret Word**._(Must be the same value entered in your OpenCart admin.)_
-5. Set the **Approved URL** to http://www.yourstore.com/index.php?route=payment/twocheckout/callback _(Replace http://www.yourstore.com with the actual URL to your store.)_
+5. Set the **Approved URL** to http://www.yourstore.com/index.php?route=extension/payment/twocheckout\_pp/callback _(Replace http://www.yourstore.com with the actual URL to your store.)_
 6. Click **Save Changes**.
 
 Please feel free to contact 2Checkout directly with any integration questions.
